@@ -12,8 +12,7 @@ export default async function handler(req, res) {
 
   const models = [
     'gemini-3.8-flash',
-    'gemini-2.5-flash-lite',
-    'gemini-2.0-flash'
+    'gemini-2.5-flash-lite'
   ];
 
   let lastError = 'Lỗi kết nối tới Gemini API';
@@ -36,17 +35,6 @@ export default async function handler(req, res) {
       }
 
       lastError = data.error?.message || `Lỗi từ model ${model}`;
-
-      // Nếu không phải lỗi quá tải / không khả dụng thì dừng ngay
-      const isRetryable =
-        response.status === 429 ||
-        response.status === 503 ||
-        response.status === 404 ||
-        /high demand|not found|no longer available|overloaded/i.test(lastError);
-
-      if (!isRetryable) {
-        return res.status(response.status).json(data);
-      }
     } catch (error) {
       lastError = error.message || 'Lỗi mạng khi gọi Gemini API';
     }
